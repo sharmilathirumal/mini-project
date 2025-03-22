@@ -72,9 +72,6 @@ public class PayrollServiceImpl implements PayrollService {
             throw new RuntimeException("Employee Not Found");
         }
        List<Payroll> payrolls = payrollRepository.findByEmployeeId(id);
-        if(payrolls.isEmpty()){
-            throw new RuntimeException("this employee have no payroll data");
-        }
        List<PayrollDTO> payrollDTOS =new ArrayList<>();
        for(Payroll payroll : payrolls){
            payrollDTOS.add(modelMapper.map(payroll,PayrollDTO.class));
