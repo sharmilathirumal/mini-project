@@ -3,6 +3,7 @@ package com.example.spring_thymeleaf.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -32,11 +33,14 @@ public class Payroll {
     private Double salary;
 
     @Column(nullable = false)
-    private Date payDate;
+    private LocalDate payDate;
 
-    public Date getPayDate() {
-        return payDate;
-    }
+    @Column(nullable = false)
+    private Double deduction;
+
+    @Column(nullable = false)
+    private Double netPay;
+
 
     public Double getSalary() {
         return salary;
@@ -50,13 +54,32 @@ public class Payroll {
         this.employee = employee;
     }
 
-    public void setPayDate(Date payDate) {
-        this.payDate = payDate;
-    }
 
     public void setSalary(Double salary) {
         this.salary = salary;
     }
 
+    public Double getDeduction() {
+        return deduction;
+    }
 
+    public void setDeduction(Double deduction) {
+        this.deduction = deduction;
+    }
+
+    public Double getNetPay() {
+        return netPay;
+    }
+
+    public void setNetPay(Double netPay) {
+        this.netPay = netPay;
+    }
+
+    public LocalDate getPayDate() {
+        return payDate;
+    }
+
+    public void setPayDate(LocalDate payDate) {
+        this.payDate = payDate;
+    }
 }

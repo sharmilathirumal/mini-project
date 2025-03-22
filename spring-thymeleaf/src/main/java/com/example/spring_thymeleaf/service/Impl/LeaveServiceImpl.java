@@ -3,8 +3,10 @@ package com.example.spring_thymeleaf.service.Impl;
 import com.example.spring_thymeleaf.dto.LeaveDTO;
 import com.example.spring_thymeleaf.entity.Employee;
 import com.example.spring_thymeleaf.entity.Leave;
+import com.example.spring_thymeleaf.enums.LeaveDuration;
 import com.example.spring_thymeleaf.enums.LeaveStatus;
 import com.example.spring_thymeleaf.enums.LeaveType;
+import com.example.spring_thymeleaf.repository.AttendanceRepository;
 import com.example.spring_thymeleaf.repository.EmployeeRepository;
 import com.example.spring_thymeleaf.repository.LeaveRepository;
 import com.example.spring_thymeleaf.service.LeaveService;
@@ -13,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class LeaveServiceImpl implements LeaveService {
@@ -29,100 +29,89 @@ public class LeaveServiceImpl implements LeaveService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private AttendanceRepository attendanceRepository;
+
     @Override
-    public LeaveDTO ApplyForLeave(Long emp_id,Date endDate,LeaveType type,Date startDate){
-        Employee employee = employeeRepository.findById(emp_id).orElseThrow(()->new RuntimeException("Employee Not Found"));
+    public void applyForLeave(LeaveDTO leaveDTO) {
+        Employee employee = employeeRepository.findById(leaveDTO.getEmployeeId()).orElseThrow(() -> new IllegalStateException("Employee Not Found"));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        List<Date> start_Date = leaveRepository.findAllStartDateById(emp_id);
-        List<Date> end_Date = leaveRepository.findAllEndDateById(emp_id);
+        if (leaveRepository.existsByEmployeeIdAndDate(leaveDTO.getEmployeeId(), leaveDTO.getStartDate()) || leaveRepository.existsByEmployeeIdAndDate(leaveDTO.getEmployeeId(), leaveDTO.getEndDate())) {
+            throw new IllegalStateException("You have recorded leave for the same date, therefore, leave cannot be added.");
+        }
 
-        for(Date date : start_Date) {
-            if(sdf.format(date).equals(sdf.format(startDate))) {
-                throw new RuntimeException("Employee already logged with this start date, please check and try again.");
+        if (leaveDTO.getDuration().equals(LeaveDuration.FULL_DAY)) {
+            if (attendanceRepository.existsByEmployeeIdAndDate(leaveDTO.getEmployeeId(), leaveDTO.getStartDate()) || attendanceRepository.existsByEmployeeIdAndDate(leaveDTO.getEmployeeId(), leaveDTO.getEndDate())) {
+                throw new IllegalStateException("You have recorded attendance for the same date, therefore, leave cannot be added.");
             }
         }
 
-        for(Date date : end_Date) {
-            if(sdf.format(date).equals(sdf.format(endDate))) {
-                throw new RuntimeException("Employee already logged with this end date, please check and try again.");
-            }
+        if (leaveDTO.getStartDate().isAfter(leaveDTO.getEndDate())) {
+            throw new IllegalStateException("start date should be less than end date");
         }
-        //String s = sdf.format(startDate);
-        Leave leave = new Leave();
-        if(startDate.after(endDate)){
-            throw new RuntimeException("start date should be less than end date");
-        }
-        leave.setEmployee(employee);
-        leave.setLeaveType(type);
-        leave.setStartDate(startDate);
-        leave.setEndDate(endDate);
+        Leave leave = modelMapper.map(leaveDTO, Leave.class);
+        leave.setId(null);
         leave.setLeaveStatus(LeaveStatus.PENDING);
+        leave.setEmployee(employee);
         leaveRepository.save(leave);
-        return modelMapper.map(leave,LeaveDTO.class);
     }
 
     @Override
-    public LeaveDTO UpdateLeaveStatus(LeaveDTO leaveDTO) {
-        Leave leave = leaveRepository.findById(leaveDTO.getId()).orElseThrow(()->new RuntimeException("Leave not found"));
-        if(!leave.getLeaveStatus().equals(LeaveStatus.PENDING)){
+    public LeaveDTO updateLeaveStatus(LeaveDTO leaveDTO) {
+        Leave leave = leaveRepository.findById(leaveDTO.getId()).orElseThrow(() -> new IllegalStateException("Leave not found"));
+        if (!leave.getLeaveStatus().equals(LeaveStatus.PENDING)) {
+            throw new IllegalStateException("Only Pending leave record can be updated");
+        }
+        leave.setLeaveStatus(leaveDTO.getLeaveStatus());
+
+        leaveRepository.save(leave);
+        return modelMapper.map(leave, LeaveDTO.class);
+    }
+
+    @Override
+    public LeaveDTO updateLeaveRecord(LeaveDTO leaveDTO) {
+        Leave leave = leaveRepository.findById(leaveDTO.getId()).orElseThrow(() -> new RuntimeException("Leave not found"));
+
+        if (!Objects.equals(leaveDTO.getLeaveStatus(),LeaveStatus.PENDING)) {
             throw new RuntimeException("Only Pending leave record can be updated");
         }
-            leave.setLeaveStatus(leaveDTO.getLeaveStatus());
 
+        if (leaveDTO.getStartDate().isAfter(leaveDTO.getEndDate())) {
+            throw new IllegalStateException("start date should be less than end date");
+        }
+
+        if (!Objects.equals(leaveDTO.getStartDate(),leave.getStartDate()) || !Objects.equals(leaveDTO.getEndDate(),leave.getEndDate())) {
+            if (leaveRepository.existsByEmployeeIdAndDate(leaveDTO.getEmployeeId(), leaveDTO.getStartDate()) || leaveRepository.existsByEmployeeIdAndDate(leaveDTO.getEmployeeId(), leaveDTO.getEndDate())) {
+                throw new IllegalStateException("You have recorded leave for the date already, therefore, leave cannot be added.");
+            }
+            leave.setStartDate(leaveDTO.getStartDate());
+            leave.setEndDate(leaveDTO.getEndDate());
+        }
+        if (leaveDTO.getDuration().equals(LeaveDuration.FULL_DAY)) {
+            if (attendanceRepository.existsByEmployeeIdAndDate(leaveDTO.getEmployeeId(), leaveDTO.getStartDate()) || attendanceRepository.existsByEmployeeIdAndDate(leaveDTO.getEmployeeId(), leaveDTO.getEndDate())) {
+                throw new IllegalStateException("You have recorded attendance for the same date, therefore, leave cannot be added.");
+            }
+        }
+        if (!Objects.equals(leaveDTO.getLeaveType(),leave.getLeaveType())){
+            leave.setLeaveType(leaveDTO.getLeaveType());
+        }
+        if (!Objects.equals(leaveDTO.getDuration(),leave.getDuration())){
+            leave.setDuration(leaveDTO.getDuration());
+        }
+
+        leave.setLeaveStatus(LeaveStatus.PENDING);
         leaveRepository.save(leave);
-       return modelMapper.map(leave,LeaveDTO.class);
+        return modelMapper.map(leave, LeaveDTO.class);
+
     }
 
     @Override
-    public LeaveDTO UpdateLeaveRecord(Long id, LeaveType leaveType, Date startDate, Date endDate) {
-            Leave leave = leaveRepository.findById(id).orElseThrow(()->new RuntimeException("Leave not found"));
-            Long emp_id = leave.getEmployee().getId();
-            if(!leave.getLeaveStatus().equals(LeaveStatus.PENDING)){
-                throw new RuntimeException("Only Pending leave record can be updated");
-            }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        List<Date> start_Date = leaveRepository.findAllStartDateById(emp_id);
-        List<Date> end_Date = leaveRepository.findAllEndDateById(emp_id);
-        for(Date date : start_Date) {
-            if(sdf.format(date).equals(sdf.format(startDate))) {
-                throw new RuntimeException("Employee already logged with this start date, please check and try again.");
-            }
-        }
-
-        for(Date date : end_Date) {
-            if(sdf.format(date).equals(sdf.format(endDate))) {
-                throw new RuntimeException("Employee already logged with this end date, please check and try again.");
-            }
-        }
-            if(startDate ==null && endDate !=null){
-                if(leave.getStartDate().after(endDate)) throw new RuntimeException("start date should not be higher than end date");
-             }
-            if(leaveType !=null){
-                leave.setLeaveType(leaveType);
-            }
-            if(startDate !=null){
-                if(startDate.after(endDate)) throw new RuntimeException("start date should not be higher than end date");
-                leave.setStartDate(startDate);
-            }
-            if(endDate != null){
-                leave.setEndDate(endDate);
-            }
-
-            /*if(status !=null){
-                leave.setLeaveStatus(status);
-            }*/
-            //leave.setLeaveStatus(leave);
-             leaveRepository.save(leave);
-             return modelMapper.map(leave,LeaveDTO.class);
-    }
-
-    @Override
-    public List<LeaveDTO> GetAllLeaves() {
+    public List<LeaveDTO> getAllLeaves() {
         List<Leave> leaves = leaveRepository.findAll();
-        if(leaves.size() ==0) throw new RuntimeException("Employee does not have leave details");
+        if (leaves.size() == 0) throw new RuntimeException("Employee does not have leave details");
         List<LeaveDTO> leaveDTOS = new ArrayList<>();
-        for(Leave leave :leaves){
-           leaveDTOS.add(modelMapper.map(leave,LeaveDTO.class));
+        for (Leave leave : leaves) {
+            leaveDTOS.add(modelMapper.map(leave, LeaveDTO.class));
         }
         return leaveDTOS;
     }
@@ -152,30 +141,28 @@ public class LeaveServiceImpl implements LeaveService {
         else throw  new RuntimeException("Only Pending Leave can be canceled");
     }*/
 
-    public List<LeaveDTO> GetLeaveDetailsOfEmployee(Long id){
+    public List<LeaveDTO> getLeaveDetailsOfEmployee(Long id) {
         List<Leave> leaves = leaveRepository.findByEmployee_Id(id);
         List<LeaveDTO> leaveDTOS = new ArrayList<>();
-        for(Leave leave :leaves){
-            leaveDTOS.add(modelMapper.map(leave,LeaveDTO.class));
+        for (Leave leave : leaves) {
+            leaveDTOS.add(modelMapper.map(leave, LeaveDTO.class));
         }
         return leaveDTOS;
     }
 
     @Override
-    public void DeleteleaveById(Long id) {
-        Leave l = leaveRepository.findById(id).orElseThrow(()->new RuntimeException("Leave not found"));
-       /* Optional<Leave> leave=leaveRepository.findById(id);
-        if(leave.isPresent()){
+    public boolean deleteleaveById(Long id) {
+        if (leaveRepository.existsById(id)) {
             leaveRepository.deleteById(id);
+            return true;
         }
-        else throw new RuntimeException("Leave not found");*/
-        leaveRepository.deleteById(id);
+        return false;
     }
 
-    public LeaveDTO getLeaveById(Long id){
-        Optional<Leave> leave= leaveRepository.findById(id);
-        if(leave.isPresent()){
-            return modelMapper.map(leave,LeaveDTO.class);
+    public LeaveDTO getLeaveById(Long id) {
+        Optional<Leave> leave = leaveRepository.findById(id);
+        if (leave.isPresent()) {
+            return modelMapper.map(leave, LeaveDTO.class);
         }
         throw new RuntimeException("Leave Not Found");
     }

@@ -1,9 +1,12 @@
 package com.example.spring_thymeleaf.entity;
 
-import com.example.spring_thymeleaf.enums.EmployeeStatus;
+import com.example.spring_thymeleaf.enums.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -20,47 +23,81 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "First Name is required")
     @Column(nullable = false)
     private String firstName;
 
+    @NotNull(message = "LastName is required")
     @Column(nullable = false)
     private String lastName;
 
+    @NotNull(message = "Email is required")
     @Column(nullable = false,unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @NotNull(message = "Phone Number is required")
+    @Column(nullable = false, unique = true)
     private Long phoneNo;
 
-    @Temporal(TemporalType.DATE)
-    @Column(nullable = true)
-    private Date dateOfBirth;
-
+    @NotNull(message = "Date Of Birth is required")
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
-    private Date hiredDate;
+    private LocalDate dateOfBirth;
 
+    @NotNull(message = "Hired Date is required")
+    @Temporal(TemporalType.DATE)
     @Column(nullable = false)
-    private String designation;
+    private LocalDate hiredDate;
 
+    @NotNull(message = "Designation is required")
     @Column(nullable = false)
-    private Double salary;
+    @Enumerated(EnumType.STRING)
+    private EmployeeDesignation designation;
 
+    @NotNull(message = "Salary is required")
+    @Column(nullable = false)
+    private BigDecimal salary;
+
+    @NotNull(message = "Status is required")
     @Enumerated(EnumType.STRING)
     private EmployeeStatus status;
+
+    @NotNull(message = "Gender is required")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @NotNull(message = "Marital Status is required")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MaritalStatus maritalStatus;
+
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "address_id",referencedColumnName = "id",unique = true)
+    private Address address;
+
+    @NotNull(message = "Role is required")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @ManyToOne
     @JoinColumn(name = "department_id",nullable = false)
     private Department department;
 
-    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Attendance> attendance;
 
-    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Leave> leaves;
 
-    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Payroll> payroll;
+
+    @ManyToOne
+    @JoinColumn(name = "teamId",nullable = false)
+    private Team team;
+
 
     public String getFirstName() {
         return firstName;
@@ -82,19 +119,19 @@ public class Employee {
         return phoneNo;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public Date getHiredDate() {
+    public LocalDate getHiredDate() {
         return hiredDate;
     }
 
-    public String getDesignation() {
+    public EmployeeDesignation getDesignation() {
         return designation;
     }
 
-    public Double getSalary() {
+    public BigDecimal getSalary() {
         return salary;
     }
 
@@ -104,6 +141,15 @@ public class Employee {
 
     public List<Attendance> getAttendance() {
         return attendance;
+    }
+
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public List<Leave> getLeaves() {
@@ -134,19 +180,19 @@ public class Employee {
         this.phoneNo = phoneNo;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public void setHiredDate(Date hiredDate) {
+    public void setHiredDate(LocalDate hiredDate) {
         this.hiredDate = hiredDate;
     }
 
-    public void setDesignation(String designation) {
+    public void setDesignation(EmployeeDesignation designation) {
         this.designation = designation;
     }
 
-    public void setSalary(Double salary) {
+    public void setSalary(BigDecimal salary) {
         this.salary = salary;
     }
 
@@ -180,5 +226,38 @@ public class Employee {
 
     public void setPayroll(List<Payroll> payroll) {
         this.payroll = payroll;
+    }
+
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public MaritalStatus getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    public void setMaritalStatus(MaritalStatus maritalStatus) {
+        this.maritalStatus = maritalStatus;
     }
 }

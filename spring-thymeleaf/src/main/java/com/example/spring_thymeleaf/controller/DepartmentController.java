@@ -2,17 +2,25 @@ package com.example.spring_thymeleaf.controller;
 
 import com.example.spring_thymeleaf.dto.DepartmentDTO;
 import com.example.spring_thymeleaf.dto.EmployeeDTO;
+import com.example.spring_thymeleaf.entity.Employee;
 import com.example.spring_thymeleaf.service.DepartmentService;
+import com.example.spring_thymeleaf.service.EmployeeService;
 import com.example.spring_thymeleaf.service.Impl.DepartmentServiceImpl;
+import com.example.spring_thymeleaf.service.Impl.EmployeeServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/department")
@@ -20,7 +28,10 @@ import java.util.List;
 public class DepartmentController {
 
     @Autowired
-    private DepartmentServiceImpl departmentService;
+    private DepartmentService departmentService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @GetMapping("/add")
     public String showAddDepartment(Model model){
@@ -31,7 +42,7 @@ public class DepartmentController {
     @PostMapping("/add")
     public String AddDepartment(@ModelAttribute DepartmentDTO departmentDTO){
           departmentService.CreateDepartment(departmentDTO);
-          return "redirect:/admin/dashboard";
+          return "redirect:/hradmin/dashboard";
     }
 
     @GetMapping("/edit/{id}")
@@ -44,7 +55,7 @@ public class DepartmentController {
     @PostMapping("/update")
     public String UpdateDepartment(@ModelAttribute DepartmentDTO departmentDTO){
          departmentService.UpdateDepartmentDetails(departmentDTO);
-        return "redirect:/admin/dashboard";
+        return "redirect:/hradmin/dashboard";
     }
 
     //@PreAuthorize("hasAnyAuthority('ADMIN','HR')")
@@ -62,11 +73,15 @@ public class DepartmentController {
 
 
     //@PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/delete/{id}")
-    public String DeleteDepartment(@PathVariable Long id, RedirectAttributes redirectAttributes){
-        departmentService.DeleteDepartment(id);
-        redirectAttributes.addFlashAttribute("successMessage","Department Deleted Successfully");
-        return "redirect:/admin/dashboard";
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> DeleteDepartment(@PathVariable Long id){
+        try{
+            departmentService.DeleteDepartment(id);
+            return ResponseEntity.ok(Map.of("message", "Department deleted successfully"));
+        }
+        catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     //@PreAuthorize("hasAnyAuthority('ADMIN','HR')")

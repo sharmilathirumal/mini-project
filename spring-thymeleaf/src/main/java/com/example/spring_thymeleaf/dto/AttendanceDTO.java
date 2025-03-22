@@ -2,33 +2,37 @@ package com.example.spring_thymeleaf.dto;
 
 import com.example.spring_thymeleaf.enums.AttendanceStatus;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Data
 public class AttendanceDTO {
     private Long id;
-    private Long employeeId;  // Reference to Employee
-    private Date date;
-    private Date checkIn;
-    private Date checkOut;
+    private Long employeeId;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime checkIn;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime checkOut;
     private AttendanceStatus attendanceStatus;
-   // private String firstName;
-  //  private String lastName;
-    //private String email;
 
     public Long getEmployeeId() {
         return employeeId;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public Date getCheckIn() {
+    public LocalTime getCheckIn() {
         return checkIn;
     }
 
-    public Date getCheckOut() {
+    public LocalTime getCheckOut() {
         return checkOut;
     }
 
@@ -44,15 +48,15 @@ public class AttendanceDTO {
         this.employeeId = employeeId;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
-    public void setCheckIn(Date checkIn) {
+    public void setCheckIn(LocalTime checkIn) {
         this.checkIn = checkIn;
     }
 
-    public void setCheckOut(Date checkOut) {
+    public void setCheckOut(LocalTime checkOut) {
         this.checkOut = checkOut;
     }
 
@@ -63,4 +67,5 @@ public class AttendanceDTO {
     public void setAttendanceStatus(AttendanceStatus attendanceStatus) {
         this.attendanceStatus = attendanceStatus;
     }
+
 }

@@ -14,6 +14,8 @@ public interface AttendanceService {
     AttendanceDTO checkOut(Long id) throws ParseException;
     List<AttendanceDTO> getAttendanceByEmployeeId(Long id);
     List<AttendanceDTO> getAllAttendanceRecords();
-    AttendanceDTO updateAttendanceRecords(Long id, Date date, Date checkIn, Date checkOut, AttendanceStatus status);
-    void deleteAttendanceRecords(Long id);
+    AttendanceDTO updateAttendanceRecords(AttendanceDTO attendanceDTO);
+    boolean deleteAttendanceRecords(Long id);
+    void addAttendance(AttendanceDTO attendanceDTO);
+    AttendanceDTO getAttendanceById(Long id);
 }

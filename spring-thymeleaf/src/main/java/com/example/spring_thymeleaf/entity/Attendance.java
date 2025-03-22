@@ -5,6 +5,8 @@ import com.example.spring_thymeleaf.enums.EmployeeStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
@@ -19,14 +21,11 @@ public class Attendance {
     private Long id;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date date;
+    private LocalDate date;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date checkIn;
+    private LocalTime checkIn;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date checkOut;
+    private LocalTime checkOut;
 
     @Enumerated(EnumType.STRING)
     private AttendanceStatus attendanceStatus;
@@ -39,15 +38,15 @@ public class Attendance {
         return employee;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public Date getCheckIn() {
+    public LocalTime getCheckIn() {
         return checkIn;
     }
 
-    public Date getCheckOut() {
+    public LocalTime getCheckOut() {
         return checkOut;
     }
 
@@ -55,15 +54,15 @@ public class Attendance {
         this.employee = employee;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
-    public void setCheckIn(Date checkIn) {
+    public void setCheckIn(LocalTime checkIn) {
         this.checkIn = checkIn;
     }
 
-    public void setCheckOut(Date checkOut) {
+    public void setCheckOut(LocalTime checkOut) {
         this.checkOut = checkOut;
     }
 

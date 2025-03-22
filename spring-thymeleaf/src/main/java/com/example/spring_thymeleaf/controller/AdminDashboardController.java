@@ -1,6 +1,7 @@
 package com.example.spring_thymeleaf.controller;
 
 import com.example.spring_thymeleaf.dto.*;
+import com.example.spring_thymeleaf.service.*;
 import com.example.spring_thymeleaf.service.Impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,22 +16,22 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminDashboardController {
     @Autowired
-    private EmployeeServiceImpl employeeService;
+    private EmployeeService employeeService;
 
     @Autowired
-    private DepartmentServiceImpl departmentService;
+    private DepartmentService departmentService;
 
     @Autowired
-    private AttendanceServiceImpl attendanceService;
+    private AttendanceService attendanceService;
 
     @Autowired
-    private PayrollServiceImpl payrollService;
+    private PayrollService payrollService;
 
     @Autowired
-    private PerformanceServiceImpl performanceService;
+    private PerformanceService performanceService;
 
     @Autowired
-    private LeaveServiceImpl leaveServicel;
+    private LeaveService leaveServicel;
 
     @GetMapping("/dashboard")
     public String adminDashBoard(Model model){
@@ -38,8 +39,8 @@ public class AdminDashboardController {
         //List<EmployeeDTO> employees = employeeService.getAllEmployeeWithDepartment();
         List<DepartmentDTO> departments =departmentService.GetAllDepartments();
         List<AttendanceDTO> attendances =attendanceService.getAllAttendanceRecords();
-        List<LeaveDTO> leaves =leaveServicel.GetAllLeaves();
-        List<PayrollDTO> payrolls = payrollService.GetAllPayrollDetails();
+        List<LeaveDTO> leaves =leaveServicel.getAllLeaves();
+        List<PayrollDTO> payrolls = payrollService.getAllPayrollDetails();
         List<PerformanceDTO> performances =performanceService.GetAllPerformanceDetails();
         model.addAttribute("employees",employees);
         model.addAttribute("departments",departments);

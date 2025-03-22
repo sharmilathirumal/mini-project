@@ -1,5 +1,7 @@
 package com.example.spring_thymeleaf;
 
+import com.example.spring_thymeleaf.dto.TeamDTO;
+import com.example.spring_thymeleaf.entity.Team;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -16,6 +16,7 @@ public interface EmployeeService {
 
     void deleteEmployeeById(Long id);
 
+    List<EmployeeDTO> getEmployeesByTeamId(Long id);
     //List<EmployeeDTO> getAllEmployeeWithDepartment();
 
 }

@@ -1,8 +1,12 @@
 package com.example.spring_thymeleaf.controller;
 
+import com.example.spring_thymeleaf.dto.EmployeeDTO;
 import com.example.spring_thymeleaf.dto.PerformanceDTO;
 //import com.example.spring_thymeleaf.entity.User;
+import com.example.spring_thymeleaf.service.EmployeeService;
+import com.example.spring_thymeleaf.service.Impl.EmployeeServiceImpl;
 import com.example.spring_thymeleaf.service.Impl.PerformanceServiceImpl;
+import com.example.spring_thymeleaf.service.PerformanceService;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +23,10 @@ import java.util.List;
 public class PerformanceController {
 
     @Autowired
-    private PerformanceServiceImpl performanceService;
+    private PerformanceService performanceService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     //@PreAuthorize("hasAuthority('MANAGER')")
     @PostMapping("/addperformance")
@@ -42,9 +49,18 @@ public class PerformanceController {
     //@PreAuthorize("hasAuthority('EMPLOYEE')")
     @GetMapping("/get/{employeeId}")
     public String GetPerformanceByEmployeeId(@PathVariable Long employeeId, Model model){
-        List<PerformanceDTO> performance = performanceService.GetPerformanceById(employeeId);
-        model.addAttribute("performance",performance);
-        return "view-performance";
+        try{
+            EmployeeDTO employee = employeeService.getEmployeeById(employeeId);
+            List<PerformanceDTO> performance = performanceService.GetPerformanceById(employeeId);
+            model.addAttribute("employee",employee);
+            model.addAttribute("performances",performance);
+            return "view-performance";
+        }
+        catch (Exception e){
+            model.addAttribute("error",e.getMessage());
+            return "error-page";
+        }
+
     }
 
     //@PreAuthorize("hasAuthority('MANAGER')")

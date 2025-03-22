@@ -1,31 +1,49 @@
 package com.example.spring_thymeleaf.dto;
-import com.example.spring_thymeleaf.enums.EmployeeStatus;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import com.example.spring_thymeleaf.enums.*;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @Getter
 @Setter
 public class EmployeeDTO {
     private Long id;
+    private Title title;
     private String firstName;
     private String lastName;
     private String email;
     private Long phoneNo;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date hiredDate;
-    private String designation;
-    private Double salary;
+    private LocalDate hiredDate;
+    private EmployeeDesignation designation;
+    private BigDecimal salary;
     private EmployeeStatus status;
-    private Long departmentId;
-  //  private String departmentName;
+    private Gender gender;
+    private MaritalStatus maritalStatus;
+    private Country country;
+    private DepartmentDTO department;
+    private Role role;
+    private TeamDTO team;
+    private AddressDTO address;
+    private String employmentPeriod;
+    private int age;
+
+    public EmployeeDTO(Long id, String firstName, String lastName, String email, EmployeeDesignation designation) {
+        this.id =id;
+        this.firstName=firstName;
+        this.lastName=lastName;
+        this.email=email;
+        this.designation=designation;
+    }
+
+    public EmployeeDTO() {
+
+    }
 
     public Long getId() {
         return id;
@@ -51,19 +69,19 @@ public class EmployeeDTO {
         return phoneNo;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public Date getHiredDate() {
+    public LocalDate getHiredDate() {
         return hiredDate;
     }
 
-    public String getDesignation() {
+    public EmployeeDesignation getDesignation() {
         return designation;
     }
 
-    public Double getSalary() {
+    public BigDecimal getSalary() {
         return salary;
     }
 
@@ -71,21 +89,14 @@ public class EmployeeDTO {
         return status;
     }
 
-    public Long getDepartmentId() {
-        return departmentId;
-    }
 
-   /* public String getDepartmentName() {
+    /* public String getDepartmentName() {
         return departmentName;
     }
 
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
     }*/
-
-    public void setDepartmentId(Long departmentId) {
-        this.departmentId = departmentId;
-    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -103,19 +114,19 @@ public class EmployeeDTO {
         this.phoneNo = phoneNo;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public void setHiredDate(Date hiredDate) {
+    public void setHiredDate(LocalDate hiredDate) {
         this.hiredDate = hiredDate;
     }
 
-    public void setDesignation(String designation) {
+    public void setDesignation(EmployeeDesignation designation) {
         this.designation = designation;
     }
 
-    public void setSalary(Double salary) {
+    public void setSalary(BigDecimal salary) {
         this.salary = salary;
     }
 
@@ -123,7 +134,7 @@ public class EmployeeDTO {
         this.status = status;
     }
 
-  /* public EmployeeDTO(Long id, String firstName, String lastName, String email,
+    /* public EmployeeDTO(Long id, String firstName, String lastName, String email,
                        Date hiredDate, String departmentName){
         this.id =id;
         this.firstName =firstName;
@@ -132,4 +143,84 @@ public class EmployeeDTO {
         this.hiredDate =hiredDate;
         this.departmentName =departmentName;
     }*/
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public AddressDTO getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDTO address) {
+        this.address = address;
+    }
+
+    public String getEmploymentPeriod() {
+        return employmentPeriod;
+    }
+
+    public void setEmploymentPeriod(String employmentPeriod) {
+        this.employmentPeriod = employmentPeriod;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public MaritalStatus getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    public void setMaritalStatus(MaritalStatus maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    public Title getTitle() {
+        return title;
+    }
+
+    public void setTitle(Title title) {
+        this.title = title;
+    }
+
+    public DepartmentDTO getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(DepartmentDTO department) {
+        this.department = department;
+    }
+
+    public TeamDTO getTeam() {
+        return team;
+    }
+
+    public void setTeam(TeamDTO team) {
+        this.team = team;
+    }
 }

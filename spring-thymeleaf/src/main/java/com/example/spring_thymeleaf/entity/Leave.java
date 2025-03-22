@@ -1,10 +1,12 @@
 package com.example.spring_thymeleaf.entity;
 
+import com.example.spring_thymeleaf.enums.LeaveDuration;
 import com.example.spring_thymeleaf.enums.LeaveStatus;
 import com.example.spring_thymeleaf.enums.LeaveType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -28,12 +30,14 @@ public class Leave {
     private LeaveType leaveType;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date startDate;
+    private LocalDate startDate;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date endDate;
+    private LocalDate endDate;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private LeaveDuration duration;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -52,11 +56,11 @@ public class Leave {
         return leaveType;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
@@ -76,15 +80,23 @@ public class Leave {
         this.leaveType = leaveType;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
     public void setLeaveStatus(LeaveStatus leaveStatus) {
         this.leaveStatus = leaveStatus;
+    }
+
+    public LeaveDuration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(LeaveDuration duration) {
+        this.duration = duration;
     }
 }

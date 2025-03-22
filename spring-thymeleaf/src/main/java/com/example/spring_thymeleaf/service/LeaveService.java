@@ -9,12 +9,13 @@ import java.util.Date;
 import java.util.List;
 
 public interface LeaveService {
-     LeaveDTO ApplyForLeave(Long emp_id,Date endDate,LeaveType type,Date startDate);
-     LeaveDTO UpdateLeaveStatus(LeaveDTO leaveDTO);
-     LeaveDTO UpdateLeaveRecord(Long id, LeaveType leaveType, Date startDate, Date endDate);
-     List<LeaveDTO> GetAllLeaves();
+     void applyForLeave(LeaveDTO leaveDTO);
+     LeaveDTO updateLeaveStatus(LeaveDTO leaveDTO);
+     LeaveDTO updateLeaveRecord(LeaveDTO leaveDTO);
+     List<LeaveDTO> getAllLeaves();
      //List<LeaveDTO> GetLeavesById(Long id);
-     List<LeaveDTO> GetLeaveDetailsOfEmployee(Long id);
+     List<LeaveDTO> getLeaveDetailsOfEmployee(Long id);
     // void CancelLeaveRequest(Long id);
-     void  DeleteleaveById(Long id);
+     boolean  deleteleaveById(Long id);
+    LeaveDTO getLeaveById(Long id);
 }

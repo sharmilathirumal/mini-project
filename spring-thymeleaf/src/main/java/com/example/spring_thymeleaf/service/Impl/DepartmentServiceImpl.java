@@ -64,13 +64,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void DeleteDepartment(Long id) {
         Department department = departmentRepository.findById(id).orElseThrow(()->new RuntimeException("Department not found"));
         List<Employee> employee = employeeRepository.findByDepartment_Id(id);
-         if(employee.size() == 0) {
-             departmentRepository.deleteById(id);
+         if(!employee.isEmpty()) {
+             throw new IllegalStateException("Cannot delete department. Employees are still assigned to this department.");
          }
+        departmentRepository.deleteById(id);
        /* if(!department.getEmployees().isEmpty()){
             throw new RuntimeException("Cannot delete department with assigned employees");
         }*/
-        else throw new RuntimeException("There is employee assigned with this department please reassign them with another department then delete this department");
+
     }
 
    /* @Override

@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PerformanceServiceImpl implements PerformanceService {
@@ -55,13 +52,13 @@ public class PerformanceServiceImpl implements PerformanceService {
     @Override
     public PerformanceDTO UpdatePerformance(Long id, PerformanceDTO performanceDTO) {
         Performance performance = performanceRepository.findById(id).orElseThrow(()->new RuntimeException("Performance not Found"));
-        if(!performance.getReviewDate().equals(performanceDTO.getReviewDate())){
+        if(!Objects.equals(performance.getReviewDate(),performanceDTO.getReviewDate())){
             performance.setReviewDate(performanceDTO.getReviewDate());
         }
-        if(performance.getPerformanceScore()!=performanceDTO.getPerformanceScore()){
+        if(!Objects.equals(performance.getPerformanceScore(),performanceDTO.getPerformanceScore())){
             performance.setPerformanceScore(performanceDTO.getPerformanceScore());
         }
-        if(!performance.getComment().equals(performanceDTO.getComment())){
+        if(!Objects.equals(performance.getComment(),performanceDTO.getComment())){
             performance.setComment(performanceDTO.getComment());
         }
         return modelMapper.map(performanceRepository.save(modelMapper.map(performance,Performance.class)),PerformanceDTO.class);

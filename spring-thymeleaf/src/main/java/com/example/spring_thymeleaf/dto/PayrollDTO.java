@@ -1,8 +1,10 @@
 package com.example.spring_thymeleaf.dto;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -11,7 +13,9 @@ public class PayrollDTO {
     private Long employeeId;
     private Double salary;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date payDate;
+    private LocalDate payDate;
+    private Double deduction;
+    private Double netPay;
 
     public Long getId() {
         return id;
@@ -23,10 +27,6 @@ public class PayrollDTO {
 
     public Double getSalary() {
         return salary;
-    }
-
-    public Date getPayDate() {
-        return payDate;
     }
 
     public void setId(Long id) {
@@ -41,7 +41,28 @@ public class PayrollDTO {
         this.salary = salary;
     }
 
-    public void setPayDate(Date payDate) {
+
+    public Double getDeduction() {
+        return deduction;
+    }
+
+    public void setDeduction(Double deduction) {
+        this.deduction = deduction;
+    }
+
+    public Double getNetPay() {
+        return netPay;
+    }
+
+    public void setNetPay(Double netPay) {
+        this.netPay = netPay;
+    }
+
+    public LocalDate getPayDate() {
+        return payDate;
+    }
+
+    public void setPayDate(LocalDate payDate) {
         this.payDate = payDate;
     }
 }

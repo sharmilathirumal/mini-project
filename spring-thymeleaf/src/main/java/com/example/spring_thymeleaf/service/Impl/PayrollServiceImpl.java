@@ -28,20 +28,28 @@ public class PayrollServiceImpl implements PayrollService {
     private EmployeeRepository employeeRepository;
 
     @Override
-    public PayrollDTO AddPayroll(PayrollDTO payrollDTO) {
-        Employee employee = employeeRepository.findById(payrollDTO.getEmployeeId()).orElseThrow(()->new RuntimeException("You can't add payroll to this employee because Employee Not Found"));
-        LocalDate payrollDate = payrollDTO.getPayDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        int year = payrollDate.getYear();
-        int month = payrollDate.getMonthValue();
-        if(payrollRepository.existsByEmployeeAndYearAndMonth(employee,year,month)){
-            throw new RuntimeException("Payroll record already exists for this employee");
+    public PayrollDTO addPayroll(PayrollDTO payrollDTO) {
+        Employee employee = employeeRepository.findById(payrollDTO.getEmployeeId()).orElseThrow(()->new IllegalStateException("Employee Not Found"));
+        LocalDate payrollDate = payrollDTO.getPayDate();
+        if (payrollRepository.countByEmployeeAndYearAndMonth(employee, payrollDate.getYear(), payrollDate.getMonthValue()) > 0) {
+            throw new IllegalStateException("A payroll record for this employee has already been created for the current month.");
         }
-        if(payrollDTO.getSalary()<=0){
-            throw new RuntimeException("salary must be greater that zero");
+        if(payrollDTO.getSalary()<=0 ||payrollDTO.getSalary()<15000){
+                throw new IllegalStateException("The salary must exceed zero, with our minimum salary commencing at 15,000.");
         }
+
+        if(payrollDTO.getDeduction()>7000){
+            throw new IllegalStateException(("All employee deductions must not exceed 7,000."));
+        }
+
+        if(payrollDTO.getPayDate().isAfter(LocalDate.now())){
+            throw new IllegalStateException("Future date cannot be added");
+        }
+
         Payroll payroll =modelMapper.map(payrollDTO,Payroll.class);
-        payroll.setEmployee(employee);
         payroll.setId(null);
+        payroll.setEmployee(employee);
+        payroll.setNetPay(payrollDTO.getSalary()- payrollDTO.getDeduction());
          return modelMapper.map(payrollRepository.save(payroll),PayrollDTO.class);
     }
 
@@ -59,7 +67,7 @@ public class PayrollServiceImpl implements PayrollService {
     }*/
 
     @Override
-    public List<PayrollDTO> GetPayrollByID(Long id) {
+    public List<PayrollDTO> getPayrollByID(Long id) {
         if(employeeRepository.findById(id).isEmpty()){
             throw new RuntimeException("Employee Not Found");
         }
@@ -75,7 +83,7 @@ public class PayrollServiceImpl implements PayrollService {
     }
 
     @Override
-    public List<PayrollDTO> GetAllPayrollDetails() {
+    public List<PayrollDTO> getAllPayrollDetails() {
         List<Payroll> payrolls = payrollRepository.findAll();
         List<PayrollDTO> payrollDTOS =new ArrayList<>();
         for(Payroll payroll :payrolls){
@@ -85,7 +93,7 @@ public class PayrollServiceImpl implements PayrollService {
     }
 
     @Override
-    public void DeletePayroll(Long id) {
+    public void deletePayroll(Long id) {
         payrollRepository.findById(id).orElseThrow(()->new RuntimeException("Payroll not found"));
         payrollRepository.deleteById(id);
     }
