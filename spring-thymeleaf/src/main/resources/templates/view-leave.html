@@ -84,7 +84,7 @@
                     <th>
                         Leave Status
                     </th>
-                    <th th:if="${employee.role == T(com.example.spring_thymeleaf.enums.Role).EMPLOYEE or (user != null and user.id == employee.id)}">
+                    <th th:if="${user.role == T(com.example.spring_thymeleaf.enums.Role).EMPLOYEE or (user != null and user.id == employee.id)}">
                         Actions
                     </th>
                     </thead>
@@ -95,7 +95,7 @@
                         <td th:text="${leave.leaveType}"></td>
                         <td th:text="${leave.duration}"></td>
                         <td th:text="${leave.leaveStatus}"></td>
-                        <td th:if="${employee.role == T(com.example.spring_thymeleaf.enums.Role).EMPLOYEE or (user != null and user.id == employee.id)}">
+                        <td th:if="${user.role == T(com.example.spring_thymeleaf.enums.Role).EMPLOYEE or (user != null and user.id == employee.id)}">
                     <span th:if="${leave.leaveStatus.name() =='PENDING'}">
                         <a th:href="@{/leave/edit/{id}(id =${leave.id})}" class="btn btn-primary">Update</a>
                         <a href="#" th:attr="data-id=${leave.id}" onclick="confirmDelete(event, this)"
