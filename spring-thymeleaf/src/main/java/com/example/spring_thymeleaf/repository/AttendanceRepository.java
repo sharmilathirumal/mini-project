@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-@Repository
 public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
     public List<Attendance> findByEmployee_Id(Long id);
     @Query("SELECT a.date FROM Attendance a WHERE a.employee.id = :employeeId ORDER BY a.date ASC")
