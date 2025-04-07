@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
-@Repository
 public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     List<Employee> findByTeam_Id(Long id);
     @Query("SELECT a.date FROM Attendance a WHERE a.employee.id = :employeeId ORDER BY a.date ASC")
