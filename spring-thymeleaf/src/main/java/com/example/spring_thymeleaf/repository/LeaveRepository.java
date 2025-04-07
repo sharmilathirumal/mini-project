@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-@Repository
 public interface LeaveRepository extends JpaRepository<Leave,Long> {
      List<Leave> findByEmployee_Id(Long id);
 
