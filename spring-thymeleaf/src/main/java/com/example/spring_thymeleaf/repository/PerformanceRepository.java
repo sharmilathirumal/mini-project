@@ -5,9 +5,9 @@ import com.example.spring_thymeleaf.entity.Performance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 
+@Repository
 public interface PerformanceRepository extends JpaRepository<Performance,Long> {
     List<Performance> findByEmployee_Id(Long id);
 
