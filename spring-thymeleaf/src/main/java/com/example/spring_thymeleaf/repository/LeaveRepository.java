@@ -5,11 +5,11 @@ import com.example.spring_thymeleaf.entity.Leave;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+@Repository
 public interface LeaveRepository extends JpaRepository<Leave,Long> {
      List<Leave> findByEmployee_Id(Long id);
 
